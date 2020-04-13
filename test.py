@@ -1,25 +1,23 @@
 import pandas as pd
 
-walsData = pd.read_csv('language.csv')
 
-
-def findSeries(header):
-    for series in walsData:
-        if header in str(walsData[series]):
-            return walsData[series]
+def findSeries(df, header):
+    for series in df:
+        if header in str(df[series]):
+            return df[series]
     assert False, ('Searched for an invalid series.')
 
 
-def findSeriesPair(header1, header2, removeNullAnswers):
+def findSeriesPair(df, series, removeNullAnswers):
     frame = {}
-    for series in walsData:
-        if (header1 in str(walsData[series])):
-            frame[header1] = walsData[series]
-        elif (header2 in str(walsData[series])):
-            frame[header2] = walsData[series]
+    for i in df:
+        for j in series:
+            if (j in str(df[i])):
+                frame[j] = df[i]
     df = pd.DataFrame(frame)
     if removeNullAnswers:
-        df = df[(df[str(header1)].notnull()) & (df[str(header2)].notnull())]
+        for i in series:
+            df = df[(df[str(i)].notnull())]
     return df
 
 
@@ -32,19 +30,56 @@ def findValidResponses(series):
     return validResponses
 
 
-def generateProbabilityDf(header1, header2):
-    df = findSeriesPair(header1, header2, True)
-    responses1 = findValidResponses(df[str(header1)])
-    responses2 = findValidResponses(df[str(header2)])
-    for r1 in responses1:
-        pool = df[df[str(header1)] == str(r1)]
-        for r2 in responses2:
+def generatePDf(df, series):
+    pDfDict = {}
+    header1 = series[0]
+    header2 = series[1]
+    df = findSeriesPair(df, series, True)
+    columns = findValidResponses(df[str(header1)])
+    index = findValidResponses(df[str(header2)])
+    pDf = pd.DataFrame(columns=columns, index=index)
+    for r2 in index:
+        pool = df[df[str(header2)] == str(r2)]
+        for r1 in columns:
             matches = df[(df[str(header1)] == str(r1))
                          & (df[str(header2)] == str(r2))]
-            p = round(len(matches) / len(pool) * 100)
-            print('probability of ' + str(r1) + ' ' + str(header1) + ' with '
-                  + str(r2) + ' ' + str(header2) + ' is: ' + str(p) + '%')
+            p = len(matches) / len(pool)
+            if p <= 0.01:
+                p = 0.01
+            pDfDict[str(r1)] = p
+        pDf.loc[str(r2)] = pDfDict
+    return(pDf)
 
 
-generateProbabilityDf('1A Consonant Inventories',
-                      '2A Vowel Quality Inventories')
+def findAllHeaders(df):
+    headers = []
+    for header in df:
+        headers.append(header)
+    return headers
+
+
+def pDfToCsv(df):
+    return 0
+
+
+def generateColumnPairs(df):
+    pairs = []
+    for series1 in df:
+        for series2 in df:
+            if series1 == series2:
+                pass
+            else:
+                pairs.append([series1, series2])
+    return pairs
+
+
+def main(csv):
+    df = pd.read_csv(str(csv))
+    seriesPairs = generateColumnPairs(df)
+    for pair in seriesPairs:
+        generatePDf(df, pair)
+    # generatePDf(df, ['1A Consonant Inventories',
+    #             '2A Vowel Quality Inventories'])
+
+
+main('language_data.csv')
