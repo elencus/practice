@@ -58,10 +58,6 @@ def findAllHeaders(df):
     return headers
 
 
-def pDfToCsv(df):
-    return 0
-
-
 def generateColumnPairs(df):
     pairs = []
     for series1 in df:
@@ -78,8 +74,6 @@ def main(csv):
     seriesPairs = generateColumnPairs(df)
     for pair in seriesPairs:
         generatePDf(df, pair)
-    # generatePDf(df, ['1A Consonant Inventories',
-    #             '2A Vowel Quality Inventories'])
 
 
 main('language_data.csv')
