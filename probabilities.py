@@ -64,7 +64,7 @@ def generateColumnPairs(df):
     return pairs
 
 
-def main(csv):
+def calculateProbs(csv):
     print('running ok')
     df = pd.read_csv(str(csv))
     seriesPairs = generateColumnPairs(df)
@@ -72,4 +72,4 @@ def main(csv):
         generatePDf(df, pair)
 
 
-main('language_data.csv')
+calculateProbs('language_data.csv')
