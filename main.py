@@ -1,7 +1,7 @@
 import probabilities
+import gui
 
 def main():
-    return 0
+    gui.gui()
 
-if __name__ == "__main__":
-    main()
+main()

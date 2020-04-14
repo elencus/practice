@@ -8,6 +8,20 @@ def findSeries(df, header):
     assert False, ('Searched for an invalid series.')
 
 
+def csvToDf(csv):
+    df = pd.read_csv(str(csv))
+    return df
+
+def getSeries(df):
+    series = []
+    for i in df:
+        if i in series:
+            pass
+        else:
+            series.append(i)
+    return series
+
+
 def findSeriesPair(df, series, removeNullAnswers):
     frame = {}
     for i in df:
@@ -43,11 +57,12 @@ def generatePDf(df, series):
         for r1 in columns:
             matches = df[(df[str(header1)] == str(r1))
                          & (df[str(header2)] == str(r2))]
-            p = len(matches) / len(pool)
-            if p <= 0.01:
-                p = 0.01
+            p = round(len(matches) / len(pool), 3) * 100
+            # if p <= 1:
+            #     p = 1
             pDfDict[str(r1)] = p
         pDf.loc[str(r2)] = pDfDict
+    print(pDf)
     return(pDf)
 
 
@@ -70,6 +85,3 @@ def calculateProbs(csv):
     seriesPairs = generateColumnPairs(df)
     for pair in seriesPairs:
         generatePDf(df, pair)
-
-
-calculateProbs('language_data.csv')
