@@ -12,6 +12,7 @@ def csvToDf(csv):
     df = pd.read_csv(str(csv))
     return df
 
+
 def getSeries(df):
     series = []
     for i in df:
@@ -57,7 +58,7 @@ def generatePDf(df, series):
         for r1 in columns:
             matches = df[(df[str(header1)] == str(r1))
                          & (df[str(header2)] == str(r2))]
-            p = round(len(matches) / len(pool), 3) * 100
+            p = round(len(matches) / len(pool) * 100)
             # if p <= 1:
             #     p = 1
             pDfDict[str(r1)] = p
