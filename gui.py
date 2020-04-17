@@ -1,8 +1,7 @@
 import sys
 from PyQt5.QtWidgets import QMainWindow, QAction, qApp, QApplication, \
-    QPushButton, QScrollArea, QWidget, QVBoxLayout, QLabel, QComboBox, \
+    QPushButton, QScrollArea, QWidget, QVBoxLayout, QComboBox, \
     QTableView
-from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QAbstractTableModel
 from PyQt5 import QtWidgets, Qt
 from PyQt5.QtCore import Qt
