@@ -1,34 +1,20 @@
 import pandas as pd
 
 
-def findSeries(df, header):
-    for series in df:
-        if header in str(df[series]):
-            return df[series]
-    assert False, ('Searched for an invalid series.')
-
-
+# IN: csv file
+# OUT: pandas dataframe
 def csvToDf(csv):
     df = pd.read_csv(str(csv))
     return df
 
 
-def getSeries(df):
-    series = []
-    for i in df:
-        if i in series:
-            pass
-        else:
-            series.append(i)
-    return series
-
-
-def findSeriesPair(df, series, removeNullAnswers):
+# IN: pandas dataframe, list of series we want to find, boolean
+# if we want to remove empty cells.
+# OUT: dataframe with only the series we requested
+def findSeries(df, series, removeNullAnswers):
     frame = {}
-    for i in df:
-        for j in series:
-            if (j in str(df[i])):
-                frame[j] = df[i]
+    for i in series:
+        frame[i] = df[i]
     df = pd.DataFrame(frame)
     if removeNullAnswers:
         for i in series:
@@ -36,6 +22,8 @@ def findSeriesPair(df, series, removeNullAnswers):
     return df
 
 
+# IN: list of series
+# OUT: list of all possible values in that series
 def findValidResponses(series):
     validResponses = []
     for response in series:
@@ -45,25 +33,30 @@ def findValidResponses(series):
     return validResponses
 
 
+# IN: pandas dataframe, list of 2 series as strings
+# OUT: a dataframe of the probability that a given response
+# in one series matches with a given response in another series
 def generatePDf(df, series):
+    if len(series) > 2:
+        raise ValueError("Cannot compare more than two columns at a time.")
     pDfDict = {}
-    header1 = series[0]
-    header2 = series[1]
-    df = findSeriesPair(df, series, True)
-    columns = findValidResponses(df[str(header1)])
-    index = findValidResponses(df[str(header2)])
+    headers = []
+    for s in series:
+        headers.append(s)
+    pDfDict = {}
+    df = findSeries(df, series, True)
+    columns = findValidResponses(df[str(headers[0])])
+    index = findValidResponses(df[str(headers[1])])
     pDf = pd.DataFrame(columns=columns, index=index)
     for r2 in index:
-        pool = df[df[str(header2)] == str(r2)]
+        pool = df[df[str(headers[1])] == str(r2)]
         for r1 in columns:
-            matches = df[(df[str(header1)] == str(r1))
-                         & (df[str(header2)] == str(r2))]
+            matches = df[(df[str(headers[0])] == str(r1))
+                         & (df[str(headers[1])] == str(r2))]
             p = round(len(matches) / len(pool) * 100)
-            # if p <= 1:
-            #     p = 1
             pDfDict[str(r1)] = p
         pDf.loc[str(r2)] = pDfDict
-    print(pDf)
+        print(pDf)
     return(pDf)
 
 

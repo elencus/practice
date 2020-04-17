@@ -1,9 +1,9 @@
-import probabilities
 import gui
 
 
 def main():
-    gui.gui()
+    gui.runGui()
 
 
-main()
+if __name__ == "__main__":
+    main()
